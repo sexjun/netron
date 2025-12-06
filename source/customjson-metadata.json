@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Conv2D",
+    "category": "Layer",
+    "inputs": [{ "name": "input" }, { "name": "weight" }, { "name": "bias" }],
+    "outputs": [{ "name": "output" }],
+    "attributes": [
+      { "name": "kernel_size", "type": "int32[]" },
+      { "name": "stride", "type": "int32[]" },
+      { "name": "padding", "type": "int32[]" },
+      { "name": "dilation", "type": "int32[]", "default": 1 }
+    ]
+  },
+  {
+    "name": "Dense",
+    "category": "Layer",
+    "inputs": [{ "name": "input" }, { "name": "weight" }, { "name": "bias" }],
+    "outputs": [{ "name": "output" }],
+    "attributes": [{ "name": "units", "type": "int32" }]
+  },
+  {
+    "name": "ReLU",
+    "category": "Activation",
+    "inputs": [{ "name": "input" }],
+    "outputs": [{ "name": "output" }]
+  },
+  {
+    "name": "MaxPool2D",
+    "category": "Pool",
+    "inputs": [{ "name": "input" }],
+    "outputs": [{ "name": "output" }],
+    "attributes": [
+      { "name": "pool_size", "type": "int32[]" },
+      { "name": "stride", "type": "int32[]" }
+    ]
+  },
+  {
+    "name": "BatchNormalization",
+    "category": "Normalization",
+    "inputs": [
+      { "name": "input" },
+      { "name": "gamma" },
+      { "name": "beta" },
+      { "name": "mean" },
+      { "name": "variance" }
+    ],
+    "outputs": [{ "name": "output" }],
+    "attributes": [{ "name": "epsilon", "type": "float32", "default": 0.001 }]
+  }
+]

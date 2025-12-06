@@ -9,5 +9,6 @@
         "dist": true,
         "node_modules": true,
         "third_party": true
-    }
+    },
+    "python.languageServer": "None"
 }
