@@ -1,197 +1,8 @@
 # Custom JSON 模型插件使用说明
 
-## 概述
+[新增JSON解析器插件开发指南.md](./新增JSON解析器插件开发指南.md)
 
-这是一个为 Netron 创建的自定义 JSON 格式 AI 模型可视化插件。它允许你使用 JSON 格式描述神经网络模型，并在 Netron 中可视化。
-
-## 文件说明
-
-1. **source/customjson.js** - 主插件文件，实现了模型加载和解析逻辑
-2. **source/customjson-metadata.json** - 元数据文件，定义了操作符的输入、输出和属性
-3. **example_custom_model.json** - 示例模型文件
-
-## JSON 模型格式
-
-### 基本结构
-
-```json
-{
-  "model_type": "custom",
-  "name": "模型名称",
-  "version": "1.0",
-  "producer": "框架名称",
-  "description": "模型描述",
-  "graph": {
-    "name": "图名称",
-    "inputs": [...],
-    "outputs": [...],
-    "nodes": [...]
-  }
-}
-```
-
-### 字段说明
-
-#### 模型级别字段
-- `model_type`: 必须为 "custom"（用于识别该模型格式）
-- `name`: 模型名称（可选）
-- `version`: 模型版本（可选）
-- `producer`: 生成模型的框架名称（可选）
-- `description`: 模型描述（可选）
-
-#### Graph 字段
-- `inputs`: 输入列表
-- `outputs`: 输出列表
-- `nodes`: 节点/层列表
-
-#### 输入/输出格式
-```json
-{
-  "name": "input_0",
-  "type": "float32[1,3,224,224]"
-}
-```
-
-#### 节点格式
-```json
-{
-  "name": "节点名称",
-  "type": "操作类型",
-  "inputs": ["输入1", "输入2"],
-  "outputs": ["输出1"],
-  "params": {
-    "参数名": "参数值"
-  },
-  "weights": {
-    "权重名": {
-      "shape": [维度],
-      "dtype": "数据类型"
-    }
-  }
-}
-```
-
-## 支持的操作类型
-
-当前在 metadata 文件中定义的操作类型：
-
-1. **Conv2D** - 二维卷积层
-2. **Dense** - 全连接层
-3. **ReLU** - ReLU 激活函数
-4. **MaxPool2D** - 最大池化层
-5. **BatchNormalization** - 批归一化层
-
-你可以在 `customjson-metadata.json` 中添加更多操作类型。
-
-## 如何使用
-
-### 1. 创建你的模型 JSON 文件
-
-参考 `example_custom_model.json` 创建符合格式的 JSON 文件。
-
-### 2. 在 Netron 中打开
-
-直接在 Netron 中打开你的 JSON 文件，插件会自动识别并可视化。
-
-## 自定义插件
-
-### 修改识别条件
-
-在 `customjson.js` 的 `match` 方法中，你可以修改识别条件：
-
-```javascript
-async match(context) {
-    const obj = await context.peek('json');
-    // 修改这里的判断条件以匹配你的JSON格式
-    if (obj && obj.model_type === 'custom') {
-        return context.set('customjson', obj);
-    }
-    return null;
-}
-```
-
-### 适配你的 JSON 格式
-
-根据你的实际 JSON 结构，修改以下部分：
-
-1. **Graph 类** - 修改输入、输出、节点的解析逻辑
-2. **Node 类** - 修改节点属性、参数、权重的解析逻辑
-3. **Metadata 文件** - 添加你需要的操作类型定义
-
-### 支持的 JSON 字段名称
-
-插件会尝试从以下字段名称中读取数据（优先级从左到右）：
-
-- 节点类型：`type`, `op_type`, `layer_type`
-- 参数：`params`, `attributes`, `config`
-- 数据：`values`, `data`
-
-## 示例
-
-查看 `example_custom_model.json` 文件，它展示了一个包含以下层的简单模型：
-
-1. Conv2D 卷积层
-2. BatchNormalization 批归一化
-3. ReLU 激活
-4. MaxPool2D 池化层
-5. Dense 全连接层
-
-## 调试
-
-如果模型无法正确加载，可以：
-
-1. 检查 JSON 格式是否正确
-2. 检查 `match` 方法中的识别条件
-3. 查看浏览器控制台的错误信息
-4. 确认字段名称与插件中的解析逻辑匹配
-
-## 扩展功能
-
-### 添加新的操作类型
-
-在 `customjson-metadata.json` 中添加：
-
-```json
-{
-  "name": "YourOperationType",
-  "category": "YourCategory",
-  "inputs": [
-    { "name": "input" }
-  ],
-  "outputs": [
-    { "name": "output" }
-  ],
-  "attributes": [
-    { "name": "param_name", "type": "type", "default": value }
-  ]
-}
-```
-
-### 支持更复杂的数据类型
-
-修改 `Tensor` 类以支持更多数据类型和序列化格式。
-
-## 注意事项
-
-1. JSON 文件必须是有效的 JSON 格式
-2. 建议在模型中包含 `model_type: "custom"` 字段以便准确识别
-3. 节点的输入输出名称要保持一致，以便正确连接
-4. 权重数据可以只包含 shape 和 dtype，不需要实际数据（用于可视化结构）
-
-## 贡献
-
-如果你需要支持特定的 JSON 格式或添加新功能，可以：
-
-1. 修改 `customjson.js` 中的解析逻辑
-2. 更新 `customjson-metadata.json` 添加新的操作定义
-3. 提供示例模型文件
-
-## 许可
-
-遵循 Netron 项目的 MIT 许可。
-
-
-## 如何打包
+## 命令行
 
 ```shell
 # 打包
@@ -199,4 +10,21 @@ npm run build
 
 # 运行
 npm start
+
+
+# 网页运行
+python3 -m http.server 8080
+http://localhost:8088/source/index.html
+```
+
+##  新增一个json的解析插件
+
+![alt text](image.png)
+
+```shell
+        修改：     README.md
+        新文件：   cds_model_struct.json
+        新文件：   image.png
+        新文件：   source/cdsmodel.js
+        修改：     source/view.js
 ```

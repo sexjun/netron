@@ -1,0 +1,52 @@
+{
+  "meta_data": {
+    "name": "customjson",
+    "inputs": [
+      {
+        "name": "ifm",
+        "shape": [1, 3, 224, 224]
+      },
+      {
+        "name": "ifm2",
+        "shape": [1, 3, 224, 224]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "ofm",
+        "shape": [1, 3, 224, 224]
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "name": "custom_node",
+      "type": "CustomType",
+      "inputs": ["ifm", "ifm2"],
+      "outputs": ["edge_0"],
+      "color": "red",
+      "user_list": [1, 2, 3, 4, 5],
+      "name_list": ["a", "b", "c", "d", "e"]
+    },
+    {
+      "name": "another_node",
+      "type": "AnotherType",
+      "inputs": ["edge_0"],
+      "outputs": ["ofm"]
+    }
+  ],
+  "edges": [
+    {
+      "name": "ifm",
+      "shape": [1, 3, 224, 224]
+    },
+    {
+      "name": "edge_0",
+      "shape": [1, 3, 224, 224]
+    },
+    {
+      "name": "ofm",
+      "shape": [1, 3, 224, 224]
+    }
+  ]
+}
